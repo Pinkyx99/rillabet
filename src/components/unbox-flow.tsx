@@ -6,15 +6,16 @@ import Image from 'next/image';
 import { type DropItem } from './unboxing-experience';
 import { cn } from '@/lib/utils';
 import React from 'react';
+import { type InventoryItem } from '@/context/InventoryContext';
 
 interface UnboxFlowProps {
   items: DropItem[];
-  wonItems: (DropItem | null)[];
+  wonItems: (InventoryItem | null)[];
 }
 
 interface CarouselInstance {
   id: number;
-  wonItem: DropItem;
+  wonItem: InventoryItem;
   items: DropItem[];
   ref: React.RefObject<HTMLDivElement>;
   isSpinning: boolean;
@@ -32,7 +33,7 @@ export function UnboxFlow({ items, wonItems }: UnboxFlowProps) {
   useEffect(() => {
     if (wonItems.length > 0) {
       // Initialize carousels state
-      const initialCarousels = wonItems.map((wonItem, i) => {
+      const initialCarousels = wonItems.map((wonItem) => {
         if (!wonItem) return null;
         return {
           id: Math.random(),
@@ -115,3 +116,5 @@ export function UnboxFlow({ items, wonItems }: UnboxFlowProps) {
     </div>
   );
 }
+
+    

@@ -2,10 +2,13 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase/client';
+
 
 interface BalanceContextType {
   balance: number;
-  setBalance: React.Dispatch<React.SetStateAction<number>>;
   addToBalance: (amount: number) => void;
   deductFromBalance: (amount: number) => boolean;
 }
@@ -13,45 +16,45 @@ interface BalanceContextType {
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export const BalanceProvider = ({ children }: { children: ReactNode }) => {
+  const { profile, user } = useAuth();
   const [balance, setBalance] = useState<number>(0);
-  const [isHydrated, setIsHydrated] = useState(false);
-
+  
   useEffect(() => {
-    const savedBalance = localStorage.getItem('userBalance');
-    if (savedBalance) {
-      setBalance(parseFloat(savedBalance));
+    if (profile) {
+      setBalance(profile.balance);
+    } else {
+      setBalance(0);
     }
-    setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem('userBalance', balance.toString());
+  }, [profile]);
+  
+  const updateBalanceInDb = async (newBalance: number) => {
+    if (!user) return;
+    const profileRef = doc(db, 'profiles', user.uid);
+    try {
+      await updateDoc(profileRef, { balance: newBalance });
+    } catch (error) {
+      console.error('Failed to update balance:', error);
     }
-  }, [balance, isHydrated]);
+  };
 
   const addToBalance = (amount: number) => {
-    setBalance(prevBalance => prevBalance + amount);
+    const newBalance = balance + amount;
+    setBalance(newBalance);
+    updateBalanceInDb(newBalance);
   };
 
   const deductFromBalance = (amount: number) => {
     if (balance >= amount) {
-      setBalance(prevBalance => prevBalance - amount);
+      const newBalance = balance - amount;
+      setBalance(newBalance);
+      updateBalanceInDb(newBalance);
       return true;
     }
     return false;
   };
-  
-  if (!isHydrated) {
-    return (
-        <BalanceContext.Provider value={{ balance: 0, setBalance, addToBalance, deductFromBalance }}>
-            {children}
-        </BalanceContext.Provider>
-    );
-  }
 
   return (
-    <BalanceContext.Provider value={{ balance, setBalance, addToBalance, deductFromBalance }}>
+    <BalanceContext.Provider value={{ balance, addToBalance, deductFromBalance }}>
       {children}
     </BalanceContext.Provider>
   );

@@ -11,8 +11,8 @@ const dropItems = [
     { name: 'Vans Classic Green Logo Sticker', image: 'https://i.imgur.com/I8CQ0qQ.png', aiHint: 'vans logo sticker', price: 1.19, percentage: '4.3204%' },
     { name: 'Apple Logo Sticker', image: 'https://i.imgur.com/V1PquWM.png', aiHint: 'apple logo sticker', price: 0.79, percentage: '6.0521%' },
     { name: '"Buy The Dip" Sticker', image: 'https://i.imgur.com/Z7qdJTZ.png', aiHint: 'buy the dip sticker', price: 0.39, percentage: '8.6297%' },
-    { name: '$0.05 RillaBox Voucher', image: 'https://i.imgur.com/taYNJzN.png', aiHint: 'rillabox voucher', price: 0.05, percentage: '35.1321%' },
-    { name: '$0.01 RillaBox Voucher', image: 'https://i.imgur.com/T8J1Zy9.png', aiHint: 'rillabox voucher', price: 0.01, percentage: '39.2541%' },
+    { name: '$0.05 PinkyBox Voucher', image: 'https://i.imgur.com/taYNJzN.png', aiHint: 'PinkyBox voucher', price: 0.05, percentage: '35.1321%' },
+    { name: '$0.01 PinkyBox Voucher', image: 'https://i.imgur.com/T8J1Zy9.png', aiHint: 'PinkyBox voucher', price: 0.01, percentage: '39.2541%' },
 ];
 
 export default function LuckyDipBoxPage() {

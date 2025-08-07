@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "RILLABOX",
+  title: "PinkyBox",
   description: "Gamified e-commerce for mystery boxes.",
 };
 
@@ -23,8 +24,10 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        {children}
-        <Toaster />
+        <AuthProvider>
+            {children}
+            <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

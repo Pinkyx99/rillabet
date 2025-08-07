@@ -11,6 +11,8 @@ import { BalanceProvider } from '@/context/BalanceContext';
 import { Header } from '@/components/layout/header';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { InventoryProvider } from '@/context/InventoryContext';
+
 
 function PromoCodesContent() {
     const [promoCode, setPromoCode] = useState('');
@@ -46,7 +48,7 @@ function PromoCodesContent() {
     
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground">
-            <Header drops={[]} newDropId={null} />
+            <Header />
             <main className="flex-1 flex flex-col items-center justify-center p-4">
                 <div className="w-full max-w-md">
                      <Link href="/" passHref>
@@ -81,7 +83,9 @@ function PromoCodesContent() {
 export default function PromoCodesPage() {
     return (
         <BalanceProvider>
+          <InventoryProvider>
             <PromoCodesContent />
+          </InventoryProvider>
         </BalanceProvider>
     );
 }

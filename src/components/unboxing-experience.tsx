@@ -14,6 +14,7 @@ import { MultiUnboxResultDialog } from './multi-unbox-result-dialog';
 import { useBalance } from '@/context/BalanceContext';
 import { useToast } from '@/hooks/use-toast';
 import { BalanceProvider } from '@/context/BalanceContext';
+import { InventoryProvider, useInventory, type InventoryItem } from '@/context/InventoryContext';
 
 export interface DropItem {
     name: string;
@@ -32,29 +33,30 @@ interface UnboxingExperienceProps {
 
 function UnboxingExperienceContent({ boxName, boxImage, dropItems, boxPrice }: UnboxingExperienceProps) {
   const [view, setView] = useState<'showcase' | 'unboxing'>('showcase');
-  const [wonItems, setWonItems] = useState<(DropItem | null)[]>([]);
+  const [wonItems, setWonItems] = useState<InventoryItem[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [unboxingKey, setUnboxingKey] = useState(0);
   const [isResultOpen, setIsResultOpen] = useState(false);
   const { balance, deductFromBalance, addToBalance } = useBalance();
+  const { addToInventory } = useInventory();
   const { toast } = useToast();
   
   const getWeightedRandomItem = (): DropItem => {
-    const totalWeight = dropItems.reduce((sum, item) => {
-        const percentage = parseFloat(item.percentage.replace('%',''));
-        return sum + percentage;
-    }, 0);
-    
-    let random = Math.random() * totalWeight;
+    let i;
+    const weights: number[] = dropItems.map(item => parseFloat(item.percentage));
 
-    for (const item of dropItems) {
-        const percentage = parseFloat(item.percentage.replace('%', ''));
-        if (random < percentage) {
-            return item;
-        }
-        random -= percentage;
+    for (i = 1; i < weights.length; i++) {
+      weights[i] += weights[i - 1];
     }
-    return dropItems[dropItems.length - 1];
+    
+    const random = Math.random() * weights[weights.length - 1];
+    
+    for (i = 0; i < weights.length; i++) {
+      if (weights[i] > random) {
+        break;
+      }
+    }
+    return dropItems[i];
   }
 
   const startUnboxing = () => {
@@ -73,7 +75,10 @@ function UnboxingExperienceContent({ boxName, boxImage, dropItems, boxPrice }: U
     setUnboxingKey(prevKey => prevKey + 1); 
     
     setTimeout(() => {
-      const newWonItems = Array.from({ length: quantity }, () => getWeightedRandomItem());
+      const newWonItems = Array.from({ length: quantity }, () => {
+        const item = getWeightedRandomItem();
+        return { ...item, id: self.crypto.randomUUID() };
+      });
       setWonItems(newWonItems);
       
       setTimeout(() => {
@@ -104,6 +109,16 @@ function UnboxingExperienceContent({ boxName, boxImage, dropItems, boxPrice }: U
     setView('showcase');
   }
 
+  const handleKeepItems = () => {
+    addToInventory(wonItems);
+    toast({
+        title: "Items Added!",
+        description: `${wonItems.length} item(s) have been added to your inventory.`,
+    });
+    setIsResultOpen(false);
+    setView('showcase');
+  }
+
   const handleCloseResults = () => {
     setIsResultOpen(false);
     setView('showcase');
@@ -119,7 +134,8 @@ function UnboxingExperienceContent({ boxName, boxImage, dropItems, boxPrice }: U
             onClose={handleCloseResults}
             onUnboxAgain={handleUnboxAgain}
             onSell={handleSellItems}
-            wonItems={wonItems.filter((item): item is DropItem => item !== null)}
+            onKeep={handleKeepItems}
+            wonItems={wonItems}
         />
         <main className="flex-1 flex flex-col items-center justify-center p-4">
             {view === 'unboxing' ? (
@@ -202,7 +218,9 @@ function UnboxingExperienceContent({ boxName, boxImage, dropItems, boxPrice }: U
 export function UnboxingExperience(props: UnboxingExperienceProps) {
     return (
         <BalanceProvider>
+          <InventoryProvider>
             <UnboxingExperienceContent {...props} />
+          </InventoryProvider>
         </BalanceProvider>
     )
 }

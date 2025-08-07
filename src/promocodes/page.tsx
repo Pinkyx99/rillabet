@@ -11,6 +11,7 @@ import { BalanceProvider } from '@/context/BalanceContext';
 import { Header } from '@/components/layout/header';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { InventoryProvider } from '@/context/InventoryContext';
 
 function PromoCodesContent() {
     const [promoCode, setPromoCode] = useState('');
@@ -81,7 +82,9 @@ function PromoCodesContent() {
 export default function PromoCodesPage() {
     return (
         <BalanceProvider>
+          <InventoryProvider>
             <PromoCodesContent />
+          </InventoryProvider>
         </BalanceProvider>
     );
 }

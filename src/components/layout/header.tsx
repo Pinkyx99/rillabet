@@ -2,7 +2,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,21 +22,33 @@ import {
   LogOut,
   Settings,
   DollarSign,
-  Sparkles
+  Package
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useBalance } from '@/context/BalanceContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
   const { balance } = useBalance();
+  const { profile, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+    router.refresh();
+  };
+
+  const username = profile?.username;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-headline text-2xl font-bold">
-              RILLABOX
+            <span className="font-headline text-3xl font-bold text-primary">
+              PINKYBOX
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-2 text-sm font-medium">
@@ -53,7 +64,7 @@ export function Header() {
                   </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>Mystery Boxes</DropdownMenuItem>
+                <DropdownMenuItem asChild><Link href="/boxes">Mystery Boxes</Link></DropdownMenuItem>
                 <DropdownMenuItem>Battles</DropdownMenuItem>
                 <DropdownMenuItem>Crash</DropdownMenuItem>
                 <DropdownMenuItem>Plinko</DropdownMenuItem>
@@ -97,11 +108,11 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2 cursor-pointer">
                   <Avatar className="h-9 w-9">
-                    <AvatarImage src="https://placehold.co/40x40.png" alt="User" data-ai-hint="user avatar" />
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarImage src="https://i.imgur.com/vH51C2L.png" alt="User" data-ai-hint="user avatar" />
+                    <AvatarFallback>{username ? username.charAt(0).toUpperCase() : 'G'}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-semibold">sadadsa</p>
+                    <p className="text-sm font-semibold">{username || 'Guest'}</p>
                     <p className="text-xs font-bold text-green-400">${balance.toFixed(2)}</p>
                   </div>
                 </div>
@@ -109,6 +120,12 @@ export function Header() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/items">
+                    <Package className="mr-2 h-4 w-4" />
+                    <span>Items</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <DollarSign className="mr-2 h-4 w-4" />
                   <span>Balance: ${balance.toFixed(2)}</span>
@@ -124,7 +141,7 @@ export function Header() {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

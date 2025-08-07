@@ -6,21 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Gift } from "lucide-react";
-import { useBalance } from "@/context/BalanceContext";
+import { useAuth } from "@/context/AuthContext";
 
 export function UserProfileStatus() {
-  const { balance } = useBalance();
+  const { profile } = useAuth();
+  const username = profile?.username;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="bg-card border-primary/20 md:col-span-1">
         <CardContent className="p-4 flex items-center gap-4">
           <Avatar className="h-12 w-12">
-            <AvatarImage src="https://placehold.co/48x48.png" alt="User" data-ai-hint="user avatar"/>
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarImage src="https://i.imgur.com/vH51C2L.png" alt="User" data-ai-hint="user avatar"/>
+            <AvatarFallback>{username ? username.charAt(0).toUpperCase() : 'G'}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="font-bold text-lg font-headline">sadadsa</p>
+            <p className="font-bold text-lg font-headline">{username || 'Guest'}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs font-bold text-primary bg-primary/20 p-1 rounded-md">0</span>
               <Progress value={0} className="w-full h-2 bg-secondary" />

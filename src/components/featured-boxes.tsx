@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface FeaturedBox {
   name: string;
@@ -15,9 +16,10 @@ interface FeaturedBox {
 }
 
 const boxes: FeaturedBox[] = [
-  { name: "Lucky Dip", price: "$0.29", image: "https://i.imgur.com/js9o1CO.png", aiHint: "lucky dip box", isSpecial: true, link: '/box/lucky-dip' },
-  { name: "1% iPhone", price: "$2.79", image: "https://i.imgur.com/rrgz00G.png", aiHint: "iphone box", isSpecial: true, link: '/box/iphone' },
-  { name: "Junkyard", price: "$0.14", image: "https://i.imgur.com/knHJPhj.png", aiHint: "junkyard box", isSpecial: true, link: '/box/junkyard' },
+  { name: "Sticker Stacker", price: "$0.44", image: "https://i.imgur.com/2BsjOwt.png", aiHint: "sticker box", isSpecial: true, link: '/box/sticker-stacker' },
+  { name: "Lucky Dip", price: "$0.29", image: "https://i.imgur.com/mtTGbDa.png", aiHint: "lucky dip box", isSpecial: true, link: '/box/lucky-dip' },
+  { name: "1% iPhone", price: "$2.79", image: "https://i.imgur.com/pJ0c8eD.png", aiHint: "iphone box", isSpecial: true, link: '/box/iphone' },
+  { name: "Junkyard", price: "$0.14", image: "https://i.imgur.com/EicmtOg.png", aiHint: "junkyard box", isSpecial: true, link: '/box/junkyard' },
 ];
 
 export function FeaturedBoxes() {
@@ -30,44 +32,25 @@ export function FeaturedBoxes() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {boxes.map((box) => {
           const cardContent = (
-             <>
-              {box.isSpecial ? (
-                <div className="group cursor-pointer rounded-lg flex flex-col items-center justify-end text-center transition-all duration-300 active:scale-95 relative overflow-hidden h-full bg-card/50 p-4 hover:bg-card/80">
-                  <div className="relative w-full h-32 mb-4">
-                    <Image
-                      src={box.image}
-                      alt={box.name}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      data-ai-hint={box.aiHint}
-                    />
+            <div className="group cursor-pointer rounded-lg flex flex-col items-center justify-end text-center transition-all duration-300 active:scale-95 relative overflow-hidden h-full bg-card p-4 border border-transparent hover:border-primary hover:shadow-glow-primary">
+              <div className="relative w-full h-32 mb-4">
+                <Image
+                  src={box.image}
+                  alt={box.name}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  data-ai-hint={box.aiHint}
+                />
+              </div>
+              <div className="mt-auto text-center w-full">
+                <p className="font-bold text-lg text-white truncate">{box.name}</p>
+                {box.price && (
+                   <div className="inline-block bg-primary/80 text-white font-bold rounded-md px-4 py-2 mt-2 shadow-md w-full">
+                    {box.price}
                   </div>
-                  <div className="mt-auto text-center w-full">
-                    <p className="font-bold text-lg text-white truncate">{box.name}</p>
-                    {box.price && (
-                       <div className="inline-block bg-primary/80 text-white font-bold rounded-md px-4 py-2 mt-2 shadow-md w-full">
-                        {box.price}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <Card className="bg-card border-primary/20 group overflow-hidden transition-all duration-300 hover:border-accent hover:shadow-glow-accent cursor-pointer h-full">
-                  <CardContent className="p-0 relative">
-                    <Image
-                      src={box.image}
-                      alt={box.name}
-                      width={300}
-                      height={300}
-                      className="aspect-square object-cover w-full group-hover:scale-105 transition-transform duration-300"
-                      data-ai-hint={box.aiHint}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                    <p className="absolute bottom-2 left-2 font-semibold text-sm">{box.name}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </>
+                )}
+              </div>
+            </div>
           );
 
           if (box.link) {
